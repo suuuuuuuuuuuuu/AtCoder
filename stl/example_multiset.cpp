@@ -9,9 +9,9 @@ ostream& operator<<(ostream& os, const multiset<int>& st){
     return os;
 }
 
-int main(){
+
+void example(){
     multiset<int> st;
-    
     /* 
     st.insert(value): 
     Insert the value. st is sorted in ascending order. O(log N)
@@ -176,7 +176,58 @@ int main(){
     st = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
     for (auto itr = st.begin(); itr != st.end(); ++itr)
         cout << *itr << ", ";
+}
 
+void solve(){
+  /*
+  https://atcoder.jp/contests/abc170/tasks/abc170_e
+  Example of using multiset.
+  */
+  int N, Q;
+  cin >> N >> Q;
+  multiset<int> S[200000];
+  int A[N], B[N];
+  for (int i = 0; i < N; i++){
+    int a, b;
+    cin >> a >> b;
+    b--;
+    A[i] = a;
+    B[i] = b;
+    S[b].insert(a);
+  }
+  multiset<int> strong_i;
+  for (int i = 0; i < 200000; i++){
+    if(S[i].empty())continue;
+    auto itr = S[i].end(); --itr;
+    strong_i.insert(*itr);
+  }
+  for (int i = 0; i < Q; i++){
+    int c, d;
+    cin >> c >> d;
+    c--;d--;
+    auto itr1 = S[B[c]].end(); --itr1;
+    strong_i.erase(strong_i.lower_bound(*itr1));
+    if (!S[d].empty()){
+      auto itr2 = S[d].end(); --itr2;
+      strong_i.erase(strong_i.lower_bound(*itr2));
+    }
+    S[B[c]].erase(S[B[c]].lower_bound(A[c]));
+    S[d].insert(A[c]);
+    if (!S[B[c]].empty()){
+      auto itr3 = S[B[c]].end(); --itr3;    
+      strong_i.insert(*itr3);
+    }
+    auto itr4 = S[d].end(); --itr4;
+    strong_i.insert(*itr4);
+    B[c] = d;
+    auto itr = strong_i.begin();
+    cout << *itr << endl;
+  }
+}
+
+int main(){
+    example();
+    solve();
     return 0;
 }
 
